@@ -77,7 +77,7 @@ describe('LoginPage 測試', () => {
             const loginButton = screen.getByRole('button', { name: /登入/i });
             await user.click(loginButton);
 
-            expect(screen.getByText('請輸入有效的 Email 格asdvasdvsadv式')).toBeInTheDocument();
+            expect(screen.getByText('請輸入有效的 Email 格式')).toBeInTheDocument();
             expect(mockLogin).not.toHaveBeenCalled();
         });
 
