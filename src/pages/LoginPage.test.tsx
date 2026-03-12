@@ -73,11 +73,11 @@ describe('LoginPage 測試', () => {
 
             const emailInput = screen.getByLabelText(/電子郵件/i);
             await user.type(emailInput, 'invalid-email');
-            
+
             const loginButton = screen.getByRole('button', { name: /登入/i });
             await user.click(loginButton);
 
-            expect(screen.getByText('請輸入有效的 Email 格式')).toBeInTheDocument();
+            expect(screen.getByText('請輸入有效的 Email 格asdvasdvsadv式')).toBeInTheDocument();
             expect(mockLogin).not.toHaveBeenCalled();
         });
 
@@ -87,10 +87,10 @@ describe('LoginPage 測試', () => {
 
             const emailInput = screen.getByLabelText(/電子郵件/i);
             await user.type(emailInput, 'test@example.com');
-            
+
             const passwordInput = screen.getByLabelText(/密碼/i);
             await user.type(passwordInput, '1234567');
-            
+
             const loginButton = screen.getByRole('button', { name: /登入/i });
             await user.click(loginButton);
 
@@ -104,21 +104,21 @@ describe('LoginPage 測試', () => {
 
             const emailInput = screen.getByLabelText(/電子郵件/i);
             await user.type(emailInput, 'test@example.com');
-            
+
             const passwordInput = screen.getByLabelText(/密碼/i);
             await user.type(passwordInput, '12345678'); // only numbers
-            
+
             const loginButton = screen.getByRole('button', { name: /登入/i });
             await user.click(loginButton);
 
             expect(screen.getByText('密碼必須包含英文字母和數字')).toBeInTheDocument();
             expect(mockLogin).not.toHaveBeenCalled();
-            
+
             // test only letters scenario
             await user.clear(passwordInput);
             await user.type(passwordInput, 'abcdefgh'); // only letters
             await user.click(loginButton);
-            
+
             expect(screen.getByText('密碼必須包含英文字母和數字')).toBeInTheDocument();
             expect(mockLogin).not.toHaveBeenCalled();
         });
@@ -128,15 +128,15 @@ describe('LoginPage 測試', () => {
         it('登入成功：導向 dashboard', async () => {
             const user = userEvent.setup();
             mockLogin.mockResolvedValueOnce(undefined);
-            
+
             renderLoginPage();
 
             const emailInput = screen.getByLabelText(/電子郵件/i);
             await user.type(emailInput, 'test@example.com');
-            
+
             const passwordInput = screen.getByLabelText(/密碼/i);
             await user.type(passwordInput, 'password123');
-            
+
             const loginButton = screen.getByRole('button', { name: /登入/i });
             await user.click(loginButton);
 
@@ -157,15 +157,15 @@ describe('LoginPage 測試', () => {
                     }
                 }
             });
-            
+
             renderLoginPage();
 
             const emailInput = screen.getByLabelText(/電子郵件/i);
             await user.type(emailInput, 'test@example.com');
-            
+
             const passwordInput = screen.getByLabelText(/密碼/i);
             await user.type(passwordInput, 'wrongpassword123');
-            
+
             const loginButton = screen.getByRole('button', { name: /登入/i });
             await user.click(loginButton);
 
@@ -180,7 +180,7 @@ describe('LoginPage 測試', () => {
     describe('驗證權限', () => {
         it('已登入狀態：自動導向 dashboard', async () => {
             mockAuthContext.isAuthenticated = true;
-            
+
             renderLoginPage();
 
             await waitFor(() => {
@@ -190,7 +190,7 @@ describe('LoginPage 測試', () => {
 
         it('登入過期：顯示過期訊息', async () => {
             mockAuthContext.authExpiredMessage = '登入已過期，請重新登入';
-            
+
             renderLoginPage();
 
             await waitFor(() => {
