@@ -1,0 +1,56 @@
+name: AI Code Review (Gemini)
+
+# 觸發時機：當有人對 main 分支發起 Pull Request (包含開啟、更新程式碼時)
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-review:
+    name: Run Gemini Review
+    runs-on: ubuntu-latest # 使用 GitHub 提供的免費 Linux 雲端機器
+    
+    # 給予這個機器人寫入 PR 留言的權限
+    permissions:
+      pull-requests: write
+      contents: read
+      
+    steps:
+      # 步驟 1：把你的專案程式碼下載到這台雲端機器上
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 0 代表完整下載歷史紀錄，這樣才能比對本次修改了什麼
+
+      # 步驟 2：在這台機器上安裝 Python 環境
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 步驟 3：安裝我們 Python 腳本需要的套件
+      - name: Install dependencies
+        run: pip install requests
+
+      # 步驟 4：產生程式碼差異 (Diff) 並存成 txt 檔
+      - name: Generate Git Diff
+        run: git diff origin/${{ github.base_ref }} HEAD > pr_diff.txt
+
+      # 步驟 5：執行我們剛剛寫的大腦腳本 (agent.py)
+      - name: Run AI Agent
+        env:
+          # 把保險箱裡的金鑰拿出來，變成環境變數給 Python 使用
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
+        run: python agent.py pr_diff.txt
+        # 注意：如果 Python 執行到 sys.exit(1)，這個步驟就會標示為「失敗 (紅燈)」
+
+      # 步驟 6：把 AI 的評論留言到 GitHub PR 頁面上
+      - name: Post Comment to PR
+        if: always() # 非常重要！即使上一個步驟失敗亮紅燈，我們依然要執行這步把死因(留言)貼出來
+        env:
+          # GITHUB_TOKEN 是 GitHub 內建的，不需額外申請
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        run: |
+          if [ -f review.md ]; then
+            gh pr comment ${{ github.event.pull_request.number }} --body-file review.md
+          fi
