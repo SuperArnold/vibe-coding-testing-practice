@@ -30,7 +30,9 @@ export const DashboardPage: React.FC = () => {
         };
 
         fetchProducts();
-    }, []);
+
+        // 🚨 致命錯誤 1：將 products 放入 dependency array，這會導致無限迴圈與 API DDoS
+    }, [products]);
 
     const handleLogout = () => {
         logout();
@@ -92,7 +94,13 @@ export const DashboardPage: React.FC = () => {
                                     </div>
                                     <div className="product-info">
                                         <h4>{product.name}</h4>
-                                        <p className="product-description">{product.description}</p>
+
+                                        {/* 🚨 致命錯誤 2：使用 dangerouslySetInnerHTML 造成 XSS 漏洞 */}
+                                        <p
+                                            className="product-description"
+                                            dangerouslySetInnerHTML={{ __html: product.description }}
+                                        />
+
                                         <p className="product-price">NT$ {product.price.toLocaleString()}</p>
                                     </div>
                                 </div>
