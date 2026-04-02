@@ -21,7 +21,7 @@ def main():
         print("找不到 API Key！請確認 GitHub Secrets 設定。")
         sys.exit(1) # 1 代表失敗 (亮紅燈)
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
 
     # 3. 設計給 AI 的提示詞 (Prompt) - 這是 AI 審查的標準
     prompt = f"""
