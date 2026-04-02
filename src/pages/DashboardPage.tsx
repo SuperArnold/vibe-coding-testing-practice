@@ -31,7 +31,7 @@ export const DashboardPage: React.FC = () => {
 
         fetchProducts();
 
-        // 🚨 致命錯誤 1：將 products 放入 dependency array，這會導致無限迴圈與 API DDoS  測試 哈
+        // 🚨 致命錯誤 1：將 products 放入 dependency array，這會導致無限迴圈與 API DDoS  測試看看
     }, [products]);
 
     const handleLogout = () => {
